@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { ActionIcon, Alert, Button, Card, Group, NumberInput, Stack, Table, Text, TextInput, Title } from '@mantine/core'
+import { ActionIcon, Alert, Box, Button, Card, Divider, Group, NumberInput, Skeleton, Stack, Table, Text, TextInput, Title } from '@mantine/core'
 import { DateInput } from '@mantine/dates'
 import { IconPlus, IconTrash } from '@tabler/icons-react'
 import { apiGet, apiPost } from '../../lib/api'
@@ -19,13 +19,13 @@ type CuponeraDto = {
 export default function CuponeraForm() {
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [info, setInfo] = useState<string | null>(null)
+  // inline messages replaced by notifications
 
   const [totalSellos, setTotalSellos] = useState<number | ''>(10)
   const [premios, setPremios] = useState<Premio[]>([{ titulo: 'Premio 1', cantidadSellos: 5 }])
   const [fechaCaducidad, setFechaCaducidad] = useState<Date | null>(null)
   const [expired, setExpired] = useState<boolean>(false)
+  const [initialSnapshot, setInitialSnapshot] = useState<string>('')
 
   useEffect(() => {
     let mounted = true
@@ -37,8 +37,10 @@ export default function CuponeraForm() {
         setPremios(data.premios)
         setFechaCaducidad(data.fechaCaducidad ? new Date(data.fechaCaducidad) : null)
         setExpired(Boolean(data.expired))
+        const snap = JSON.stringify({ totalSellos: data.totalSellos, premios: data.premios, fechaCaducidad: data.fechaCaducidad })
+        setInitialSnapshot(snap)
       })
-      .catch((e) => setError(e.message || 'Error al cargar cuponera'))
+      .catch((e) => notifications.show({ color: 'red', title: 'Error', message: e.message || 'Error al cargar cuponera' }))
       .finally(() => setLoading(false))
     return () => {
       mounted = false
@@ -59,10 +61,17 @@ export default function CuponeraForm() {
     return errs
   }, [totalSellos, premios])
 
+  const isDirty = useMemo(() => {
+    const snap = JSON.stringify({
+      totalSellos: typeof totalSellos === 'number' ? totalSellos : 0,
+      premios,
+      fechaCaducidad: fechaCaducidad ? fechaCaducidad.toISOString() : null,
+    })
+    return initialSnapshot !== '' && snap !== initialSnapshot
+  }, [initialSnapshot, totalSellos, premios, fechaCaducidad])
+
   async function onSave() {
     setSaving(true)
-    setError(null)
-    setInfo(null)
     try {
       const payload = {
         totalSellos: typeof totalSellos === 'number' ? totalSellos : 0,
@@ -70,11 +79,14 @@ export default function CuponeraForm() {
         fechaCaducidad: fechaCaducidad ? fechaCaducidad.toISOString() : null,
       }
       const res = await apiPost<CuponeraDto>('/cuponera', payload)
-      setInfo('Guardado OK')
       setExpired(Boolean(res.expired))
+      setInitialSnapshot(JSON.stringify({
+        totalSellos: payload.totalSellos,
+        premios: payload.premios,
+        fechaCaducidad: payload.fechaCaducidad,
+      }))
       notifications.show({ color: 'green', title: 'Guardado', message: 'La cuponera se guardó correctamente' })
     } catch (e: any) {
-      setError(e.message || 'Error al guardar cuponera')
       notifications.show({ color: 'red', title: 'Error', message: e.message || 'Error al guardar cuponera' })
     } finally {
       setSaving(false)
@@ -83,37 +95,55 @@ export default function CuponeraForm() {
 
   return (
     <Stack p="md">
-      <Group justify="space-between">
-        <Title order={3}>Cuponera</Title>
+      <Group justify="space-between" mb="sm">
+        <div>
+          <Title order={3}>Cuponera</Title>
+          <Text size="sm" c="dimmed">Configura la cantidad total de sellos y los premios por hitos.</Text>
+        </div>
         {expired && <Alert color="red" title="Cuponera expirada">La cuponera está expirada</Alert>}
       </Group>
 
-      {loading && <Text>Cargando…</Text>}
-      {error && <Text c="red">{error}</Text>}
-      {info && <Text c="green">{info}</Text>}
-
-      <Card withBorder>
-        <Stack>
-          <NumberInput
-            label="Total de sellos"
-            value={totalSellos}
-            onChange={(v) => setTotalSellos(typeof v === 'number' ? v : '')}
-            min={1}
-            required
-          />
+      {loading ? (
+        <Card withBorder shadow="sm" radius="md" maw={720} mx="auto">
           <Stack>
+            <Skeleton height={28} width="40%" />
+            <Skeleton height={38} />
+            <Divider my="xs" />
+            <Skeleton height={24} width="30%" />
+            <Skeleton height={120} />
+            <Skeleton height={38} width={160} />
+          </Stack>
+        </Card>
+      ) : (
+        <Card withBorder shadow="sm" radius="md" maw={720} mx="auto">
+          <Stack>
+            <div>
+              <Text fw={500} mb={4}>Total de sellos</Text>
+              <Text size="xs" c="dimmed" mb={8}>Cantidad total de casilleros a completar en la cuponera.</Text>
+              <NumberInput
+                value={totalSellos}
+                onChange={(v) => setTotalSellos(typeof v === 'number' ? v : '')}
+                min={1}
+                required
+              />
+            </div>
+
+            <Divider label="Premios" labelPosition="left" />
+            <Text size="xs" c="dimmed">Definí los hitos de premios. La cantidad de sellos debe ser única y no superar el total.</Text>
+
             <Group gap="xs">
-              <Title order={5}>Premios</Title>
               <ActionIcon variant="light" onClick={() => setPremios((p) => [...p, { titulo: '', cantidadSellos: 1 }])}>
                 <IconPlus size={16} />
               </ActionIcon>
+              <Text size="sm" c="dimmed">Agregar premio</Text>
             </Group>
-            <Table withRowBorders={false} verticalSpacing="xs">
+
+            <Table striped highlightOnHover withRowBorders={false} verticalSpacing="xs">
               <Table.Thead>
                 <Table.Tr>
-                  <Table.Th>Título</Table.Th>
-                  <Table.Th>Cantidad de sellos</Table.Th>
-                  <Table.Th></Table.Th>
+                  <Table.Th style={{ width: '60%' }}>Título</Table.Th>
+                  <Table.Th style={{ width: '30%' }}>Cantidad de sellos</Table.Th>
+                  <Table.Th style={{ width: '10%' }}></Table.Th>
                 </Table.Tr>
               </Table.Thead>
               <Table.Tbody>
@@ -138,24 +168,39 @@ export default function CuponeraForm() {
                     </Table.Td>
                   </Table.Tr>
                 ))}
+                {premios.length === 0 && (
+                  <Table.Tr>
+                    <Table.Td colSpan={3}><Text size="sm" c="dimmed">No hay premios. Agregá al menos uno.</Text></Table.Td>
+                  </Table.Tr>
+                )}
               </Table.Tbody>
             </Table>
+
+            <Divider label="Vigencia" labelPosition="left" />
+            <div>
+              <Text size="xs" c="dimmed" mb={8}>Fecha a partir de la cual la cuponera deja de estar activa.</Text>
+              <DateInput value={fechaCaducidad} onChange={setFechaCaducidad} clearable valueFormat="DD/MM/YYYY" />
+            </div>
+
+            {validations.length > 0 && (
+              <Alert color="yellow" title="Validaciones">
+                <Stack gap={4}>
+                  {validations.map((v, i) => (
+                    <Text key={i} size="sm">• {v}</Text>
+                  ))}
+                </Stack>
+              </Alert>
+            )}
+
+            <Box style={{ position: 'sticky', bottom: 0, background: 'var(--mantine-color-body)', paddingTop: 8 }}>
+              <Group justify="space-between">
+                <Text size="sm" c="dimmed">{isDirty ? 'Cambios sin guardar' : 'Sin cambios'}</Text>
+                <Button onClick={onSave} loading={saving} disabled={validations.length > 0 || !isDirty}>Guardar</Button>
+              </Group>
+            </Box>
           </Stack>
-          <DateInput label="Fecha de caducidad" value={fechaCaducidad} onChange={setFechaCaducidad} clearable />
-          {validations.length > 0 && (
-            <Alert color="yellow" title="Validaciones">
-              <Stack gap={4}>
-                {validations.map((v, i) => (
-                  <Text key={i} size="sm">• {v}</Text>
-                ))}
-              </Stack>
-            </Alert>
-          )}
-          <Group>
-            <Button onClick={onSave} loading={saving} disabled={validations.length > 0}>Guardar</Button>
-          </Group>
-        </Stack>
-      </Card>
+        </Card>
+      )}
     </Stack>
   )
 }
