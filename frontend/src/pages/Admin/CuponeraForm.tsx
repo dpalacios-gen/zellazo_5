@@ -3,6 +3,7 @@ import { ActionIcon, Alert, Button, Card, Group, NumberInput, Stack, Table, Text
 import { DateInput } from '@mantine/dates'
 import { IconPlus, IconTrash } from '@tabler/icons-react'
 import { apiGet, apiPost } from '../../lib/api'
+import { notifications } from '@mantine/notifications'
 
 type Premio = { titulo: string; cantidadSellos: number }
 
@@ -71,8 +72,10 @@ export default function CuponeraForm() {
       const res = await apiPost<CuponeraDto>('/cuponera', payload)
       setInfo('Guardado OK')
       setExpired(Boolean(res.expired))
+      notifications.show({ color: 'green', title: 'Guardado', message: 'La cuponera se guardó correctamente' })
     } catch (e: any) {
       setError(e.message || 'Error al guardar cuponera')
+      notifications.show({ color: 'red', title: 'Error', message: e.message || 'Error al guardar cuponera' })
     } finally {
       setSaving(false)
     }
