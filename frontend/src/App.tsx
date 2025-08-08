@@ -7,6 +7,7 @@ import { AuthProvider } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import AdminDashboard from './pages/Admin/Dashboard'
 import ClienteHome from './pages/Cliente/Home'
+import CuponeraForm from './pages/Admin/CuponeraForm'
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
 
             <Route element={<ProtectedRoute allow={['ADMIN']} />}>
               <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/admin/cuponera" element={<CuponeraForm />} />
             </Route>
 
             <Route element={<ProtectedRoute allow={['CLIENTE', 'ADMIN']} />}>

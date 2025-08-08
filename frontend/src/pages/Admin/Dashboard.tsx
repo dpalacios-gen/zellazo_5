@@ -1,4 +1,5 @@
 import { Button, Group, Stack, Text, Title } from '@mantine/core'
+import { Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 
 export default function AdminDashboard() {
@@ -11,6 +12,7 @@ export default function AdminDashboard() {
       </Group>
       <Text>Hola, {user?.email}</Text>
       <Text>Acá conectaremos el formulario de cuponera (2.4).</Text>
+      <Button component={Link} to="/admin/cuponera">Configurar cuponera</Button>
     </Stack>
   )
 }
