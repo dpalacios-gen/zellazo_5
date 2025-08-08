@@ -66,7 +66,7 @@
 - [ ] 2.0 Gestión de Cuponera del Local
   - [x] 2.1 Backend: modelos `Local` y `Cuponera` (única por local) con validaciones (`totalSellos`, `premios[]`, `fechaCaducidad`).
   - [x] 2.2 Backend: endpoints crear/actualizar cuponera; middleware de rol admin.
-  - [ ] 2.3 Backend: reglas globales — cambios aplican a todos los cupones existentes; bloquear operaciones si expirada.
+  - [x] 2.3 Backend: reglas globales — cambios aplican a todos los cupones existentes; bloquear operaciones si expirada.
   - [ ] 2.4 Frontend (admin): formulario crear/editar con validaciones UI; feedback de éxito/error.
   - [ ] 2.5 Tests: validaciones de payload, reglas de expiración y unicidad por local.
 

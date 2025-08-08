@@ -12,12 +12,15 @@ import AuthController from '../app/Controllers/Http/AuthController.js'
 import OAuthController from '../app/Controllers/Http/OAuthController.js'
 import LocalsController from '../app/Controllers/Http/LocalsController.js'
 import { middleware } from './kernel.js'
+import CuponerasController from '../app/Controllers/Http/CuponerasController.js'
 
 router.get('/', async () => {
   return {
     hello: 'world',
   }
 })
+
+// (debug routes removed)
 
 // Auth routes
 router.post('/auth/register', [AuthController, 'register'])
@@ -34,4 +37,12 @@ router.get('/oauth/:provider/callback', [OAuthController, 'callback'])
 // Local routes (1 admin ↔ 1 local)
 router
   .post('/locals', [LocalsController, 'create'])
+  .use(middleware.auth({ guards: ['api'] }))
+
+// Cuponera routes (admin del local)
+router
+  .get('/cuponera', [CuponerasController, 'show'])
+  .use(middleware.auth({ guards: ['api'] }))
+router
+  .post('/cuponera', [CuponerasController, 'upsert'])
   .use(middleware.auth({ guards: ['api'] }))
