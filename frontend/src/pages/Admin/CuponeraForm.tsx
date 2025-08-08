@@ -95,13 +95,13 @@ export default function CuponeraForm() {
 
   return (
     <Stack p="md">
-      <Group justify="space-between" mb="sm">
-        <div>
+      <Stack align="center" mb="sm">
+        <div style={{ textAlign: 'center' }}>
           <Title order={3}>Cuponera</Title>
           <Text size="sm" c="dimmed">Configura la cantidad total de sellos y los premios por hitos.</Text>
         </div>
         {expired && <Alert color="red" title="Cuponera expirada">La cuponera está expirada</Alert>}
-      </Group>
+      </Stack>
 
       {loading ? (
         <Card withBorder shadow="sm" radius="md" maw={720} mx="auto">
