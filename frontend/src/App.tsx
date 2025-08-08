@@ -16,7 +16,16 @@ import AdminNavbarMinimal from './components/AdminNavbarMinimal'
 function HeaderUserActions() {
   const { token, signOut } = useAuth()
   if (!token) return null
-  return <Button variant="light" size="xs" onClick={signOut}>Salir</Button>
+  return (
+    <Button
+      variant="gradient"
+      gradient={{ from: 'blue', to: 'cyan' }}
+      size="xs"
+      onClick={signOut}
+    >
+      Salir
+    </Button>
+  )
 }
 
 function AppInner() {
@@ -25,18 +34,20 @@ function AppInner() {
   return (
     <>
       <Notifications position="top-right" />
-      <AppShell header={{ height: 56 }} padding="md">
+      <AppShell header={{ height: 56 }} padding="md" navbar={{ width: 80, breakpoint: 'xs' }}>
         <AppShell.Header>
           <Container size="lg" p="sm">
             <Group justify="space-between">
-              <Title order={4}>Zellazo</Title>
+              <Group>
+                <Title order={4}>Zellazo</Title>
+              </Group>
               <HeaderUserActions />
             </Group>
           </Container>
         </AppShell.Header>
-        {isAdmin && <AdminNavbarMinimal onLogout={() => { /* header handles */ }} />}
+        {isAdmin && <AppShell.Navbar withBorder={false}><AdminNavbarMinimal onLogout={() => {}} /></AppShell.Navbar>}
         <AppShell.Main>
-          <Container size="lg" style={{ marginLeft: isAdmin ? 96 : 0 }}>
+          <Container size="lg">
             <Routes>
               <Route path="/" element={<Navigate to="/login" replace />} />
               <Route path="/login" element={<LoginPage />} />

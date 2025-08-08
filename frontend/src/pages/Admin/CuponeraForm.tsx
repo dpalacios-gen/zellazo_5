@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { ActionIcon, Alert, Box, Button, Card, Divider, Group, NumberInput, Skeleton, Stack, Table, Text, TextInput, Title } from '@mantine/core'
+import { ActionIcon, Alert, Box, Button, Card, Divider, Group, NumberInput, Skeleton, Stack, Table, Text, TextInput, Title, Badge } from '@mantine/core'
 import { DateInput } from '@mantine/dates'
 import { IconPlus, IconTrash } from '@tabler/icons-react'
 import { apiGet, apiPost } from '../../lib/api'
@@ -132,10 +132,9 @@ export default function CuponeraForm() {
             <Text size="xs" c="dimmed">Definí los hitos de premios. La cantidad de sellos debe ser única y no superar el total.</Text>
 
             <Group gap="xs">
-              <ActionIcon variant="light" onClick={() => setPremios((p) => [...p, { titulo: '', cantidadSellos: 1 }])}>
-                <IconPlus size={16} />
-              </ActionIcon>
-              <Text size="sm" c="dimmed">Agregar premio</Text>
+              <Button variant="light" leftSection={<IconPlus size={16} />} onClick={() => setPremios((p) => [...p, { titulo: '', cantidadSellos: 1 }])}>
+                Agregar premio
+              </Button>
             </Group>
 
             <Table striped highlightOnHover withRowBorders={false} verticalSpacing="xs">
@@ -194,8 +193,18 @@ export default function CuponeraForm() {
 
             <Box style={{ position: 'sticky', bottom: 0, background: 'var(--mantine-color-body)', paddingTop: 8 }}>
               <Group justify="space-between">
-                <Text size="sm" c="dimmed">{isDirty ? 'Cambios sin guardar' : 'Sin cambios'}</Text>
-                <Button onClick={onSave} loading={saving} disabled={validations.length > 0 || !isDirty}>Guardar</Button>
+                <Badge color={isDirty ? 'yellow' : 'gray'} variant="light">
+                  {isDirty ? 'Cambios sin guardar' : 'Sin cambios'}
+                </Badge>
+                <Button
+                  variant="gradient"
+                  gradient={{ from: 'blue', to: 'cyan' }}
+                  onClick={onSave}
+                  loading={saving}
+                  disabled={validations.length > 0 || !isDirty}
+                >
+                  Guardar
+                </Button>
               </Group>
             </Box>
           </Stack>
