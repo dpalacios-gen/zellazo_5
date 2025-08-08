@@ -1,0 +1,5 @@
+admin
+AdminDan - dan@example.com - DAn9876
+
+cliente
+CliDan - dancli@example.com - DAn9876

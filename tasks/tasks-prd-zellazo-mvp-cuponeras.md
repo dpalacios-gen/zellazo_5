@@ -55,7 +55,7 @@
   - [ ] 1.3 (Pospuesto) — Backend: OAuth Google/Facebook (endpoints y callback); almacenamiento de vínculo OAuth↔usuario.
   - [x] 1.4 Backend: restricción 1 admin por local (modelo `Local` 1:1 con usuario admin, validación al crear).
   - [x] 1.5 Frontend: páginas `Login` y `Register` (solo email/contraseña) con Mantine.
-  - [ ] 1.6 Frontend: manejo de sesión y guardas de ruta por rol.
+  - [x] 1.6 Frontend: manejo de sesión y guardas de ruta por rol.
   - [ ] 1.7 Email: implementar proveedor con drivers por entorno — DEV: `console` (log) o `Ethereal` (preview URL) o `MailHog`; PROD: `SES`. Plantillas simples.
   - [ ] 1.8 Tests: unit/integration de auth (registro, login, verificación, reset, OAuth feliz y errores).
   - [ ] 1.9 Frontend: verificación de email (pantalla de confirmación por token).

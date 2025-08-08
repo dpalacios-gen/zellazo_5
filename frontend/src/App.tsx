@@ -1,34 +1,35 @@
-import { useState } from 'react'
 import './App.css'
-import { MantineProvider, AppShell, Container, Tabs } from '@mantine/core'
+import { MantineProvider } from '@mantine/core'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import LoginPage from './pages/Login'
 import RegisterPage from './pages/Register'
+import { AuthProvider } from './context/AuthContext'
+import ProtectedRoute from './components/ProtectedRoute'
+import AdminDashboard from './pages/Admin/Dashboard'
+import ClienteHome from './pages/Cliente/Home'
 
 function App() {
-  const [tab, setTab] = useState<string | null>('login')
   return (
     <MantineProvider>
-      <AppShell header={{ height: 56 }} padding="md">
-        <AppShell.Header>
-          <Container size="lg" p="sm">Zellazo - Auth</Container>
-        </AppShell.Header>
-        <AppShell.Main>
-          <Container size="lg">
-            <Tabs value={tab} onChange={setTab} mt="md">
-              <Tabs.List>
-                <Tabs.Tab value="login">Login</Tabs.Tab>
-                <Tabs.Tab value="register">Registro</Tabs.Tab>
-              </Tabs.List>
-              <Tabs.Panel value="login">
-                <LoginPage />
-              </Tabs.Panel>
-              <Tabs.Panel value="register">
-                <RegisterPage />
-              </Tabs.Panel>
-            </Tabs>
-          </Container>
-        </AppShell.Main>
-      </AppShell>
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Navigate to="/login" replace />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+
+            <Route element={<ProtectedRoute allow={['ADMIN']} />}>
+              <Route path="/admin" element={<AdminDashboard />} />
+            </Route>
+
+            <Route element={<ProtectedRoute allow={['CLIENTE', 'ADMIN']} />}>
+              <Route path="/cliente" element={<ClienteHome />} />
+            </Route>
+
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
     </MantineProvider>
   )
 }

@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import { Button, Paper, PasswordInput, Stack, Text, TextInput, Title } from '@mantine/core'
 import { apiPost } from '../lib/api'
+import { useAuth } from '../context/AuthContext'
+import type { User } from '../context/AuthContext'
+import { useNavigate } from 'react-router-dom'
 
 type LoginResponse = {
   token: { type: string; value?: string; token?: string; expiresAt?: string | null; name?: string | null }
@@ -8,6 +11,8 @@ type LoginResponse = {
 }
 
 export default function LoginPage() {
+  const { signIn } = useAuth()
+  const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -23,8 +28,14 @@ export default function LoginPage() {
       const res = await apiPost<LoginResponse>('/auth/login', { email, password })
       const tokenStr = res.token.value ?? res.token.token
       if (!tokenStr) throw new Error('Token no recibido')
+      const mappedUser: User = {
+        ...res.user,
+        role: res.user.role === 'ADMIN' ? 'ADMIN' : res.user.role === 'CLIENTE' ? 'CLIENTE' : undefined,
+      }
+      signIn(tokenStr, mappedUser)
       setSuccess(`Login OK. Token: ${tokenStr.substring(0, 12)}…`)
-      // TODO: store token in a proper auth store
+      const role = mappedUser.role || 'CLIENTE'
+      navigate(role === 'ADMIN' ? '/admin' : '/cliente', { replace: true })
     } catch (err: any) {
       setError(err.message || 'Error al iniciar sesión')
     } finally {
