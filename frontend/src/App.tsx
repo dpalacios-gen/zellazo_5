@@ -1,6 +1,6 @@
 import './App.css'
-import { AppShell, Container, Group, MantineProvider, Title, Button, Stack, NavLink } from '@mantine/core'
-import { BrowserRouter, Navigate, Route, Routes, useLocation, Link } from 'react-router-dom'
+import { AppShell, Container, Group, MantineProvider, Title, Button } from '@mantine/core'
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { Notifications } from '@mantine/notifications'
 import LoginPage from './pages/Login'
 import RegisterPage from './pages/Register'
@@ -11,22 +11,12 @@ import ClienteHome from './pages/Cliente/Home'
 import CuponeraForm from './pages/Admin/CuponeraForm'
 import ReportsPage from './pages/Admin/Reports.tsx'
 import { useAuth } from './context/AuthContext'
+import AdminNavbarMinimal from './components/AdminNavbarMinimal'
 
 function HeaderUserActions() {
   const { token, signOut } = useAuth()
   if (!token) return null
   return <Button variant="light" size="xs" onClick={signOut}>Salir</Button>
-}
-
-function AdminNavbar() {
-  const { pathname } = useLocation()
-  return (
-    <Stack p="sm">
-      <NavLink component={Link} to="/admin" active={pathname === '/admin'} label="Dashboard" />
-      <NavLink component={Link} to="/admin/cuponera" active={pathname.startsWith('/admin/cuponera')} label="Cuponera" />
-      <NavLink component={Link} to="/admin/reports" active={pathname.startsWith('/admin/reports')} label="Reportes" />
-    </Stack>
-  )
 }
 
 function AppInner() {
@@ -35,7 +25,7 @@ function AppInner() {
   return (
     <>
       <Notifications position="top-right" />
-      <AppShell header={{ height: 56 }} padding="md" navbar={isAdmin ? { width: 240, breakpoint: 'sm' } : undefined}>
+      <AppShell header={{ height: 56 }} padding="md">
         <AppShell.Header>
           <Container size="lg" p="sm">
             <Group justify="space-between">
@@ -44,13 +34,9 @@ function AppInner() {
             </Group>
           </Container>
         </AppShell.Header>
-        {isAdmin && (
-          <AppShell.Navbar>
-            <AdminNavbar />
-          </AppShell.Navbar>
-        )}
+        {isAdmin && <AdminNavbarMinimal onLogout={() => { /* header handles */ }} />}
         <AppShell.Main>
-          <Container size="lg">
+          <Container size="lg" style={{ marginLeft: isAdmin ? 96 : 0 }}>
             <Routes>
               <Route path="/" element={<Navigate to="/login" replace />} />
               <Route path="/login" element={<LoginPage />} />
@@ -77,7 +63,7 @@ function AppInner() {
 
 function App() {
   return (
-    <MantineProvider theme={{ primaryColor: 'blue', defaultRadius: 'md' }}>
+    <MantineProvider forceColorScheme="light" theme={{ primaryColor: 'blue', defaultRadius: 'md' }}>
       <AuthProvider>
         <BrowserRouter>
           <AppInner />
