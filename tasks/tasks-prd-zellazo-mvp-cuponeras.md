@@ -50,7 +50,7 @@
   - [x] 0.2 Frontend: crear proyecto Vite + React + TypeScript + Mantine en `frontend/` con configuración base y copia de `.env.example`.
 
 - [ ] 1.0 Autenticación y Cuentas
-  - [ ] 1.1 Backend: configurar modelos `User` (roles `ADMIN`/`CLIENTE`), hashing, verificación de email y recuperación.
+  - [x] 1.1 Backend: configurar modelos `User` (roles `ADMIN`/`CLIENTE`), hashing, verificación de email y recuperación.
   - [ ] 1.2 Backend: endpoints de registro/login/logout, verificación (link vía email), password reset.
   - [ ] 1.3 Backend: OAuth Google/Facebook (endpoints y callback); almacenamiento de vínculo OAuth↔usuario.
   - [ ] 1.4 Backend: restricción 1 admin por local (modelo `Local` 1:1 con usuario admin, validación al crear).
@@ -103,7 +103,7 @@
 
 - [ ] 8.0 Configuración e Integraciones de Plataforma
   - [x] 8.1 Crear `.env.example` en backend y frontend con `BASE_URL`, `DB_*`, `MAIL_DRIVER` (`console`|`ethereal`|`mailhog`|`ses`), `SES_*`, `GOOGLE_*`, `FACEBOOK_*` y valores de desarrollo.
-  - [ ] 8.2 Configurar `BASE_URL` desde un único archivo (`config.ts` en frontend; `.env` en backend) y usarlo en generación de URLs.
+  - [x] 8.2 Configurar `BASE_URL` desde un único archivo (`config.ts` en frontend; `.env` en backend) y usarlo en generación de URLs.
   - [ ] 8.3 Migraciones y seeders iniciales (roles, usuario admin de prueba, local y cuponera dummy).
   - [ ] 8.4 Backend: integrar drivers de email — DEV: `console` o `Ethereal` (generar cuenta y mostrar preview URL en logs) o `MailHog` (localhost:1025); PROD: `SES`.
   - [ ] 8.5 Configurar OAuth (Google/Facebook) con credenciales de dev; callback URLs usando `BASE_URL`.
