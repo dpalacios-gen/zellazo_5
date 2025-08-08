@@ -1,6 +1,7 @@
 import { BaseModel, beforeSave, column, dateTimeColumn } from '@adonisjs/lucid/orm'
 import { DateTime } from 'luxon'
 import hash from '@adonisjs/core/services/hash'
+import { DbAccessTokensProvider } from '@adonisjs/auth/access_tokens'
 
 export enum UserRole {
   ADMIN = 'ADMIN',
@@ -8,6 +9,9 @@ export enum UserRole {
 }
 
 export default class User extends BaseModel {
+  // Access tokens provider for AdonisJS auth (required for access_tokens guard)
+  static accessTokens = DbAccessTokensProvider.forModel(User)
+
   @column({ isPrimary: true })
   declare id: number
 
