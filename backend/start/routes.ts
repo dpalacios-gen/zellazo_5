@@ -13,6 +13,8 @@ import OAuthController from '../app/Controllers/Http/OAuthController.js'
 import LocalsController from '../app/Controllers/Http/LocalsController.js'
 import { middleware } from './kernel.js'
 import CuponerasController from '../app/Controllers/Http/CuponerasController.js'
+import QrController from '../app/Controllers/Http/QrController.js'
+import RegistroController from '../app/Controllers/Http/RegistroController.js'
 
 router.get('/', async () => {
   return {
@@ -39,6 +41,9 @@ router
   .post('/locals', [LocalsController, 'create'])
   .use(middleware.auth({ guards: ['api'] }))
 
+// QR del local (PNG)
+router.get('/qr/local/:publicId.png', [QrController, 'localQr'])
+
 // Cuponera routes (admin del local)
 router
   .get('/cuponera', [CuponerasController, 'show'])
@@ -46,3 +51,6 @@ router
 router
   .post('/cuponera', [CuponerasController, 'upsert'])
   .use(middleware.auth({ guards: ['api'] }))
+
+// Registro (desde QR del local)
+router.get('/registro', [RegistroController, 'handle'])
