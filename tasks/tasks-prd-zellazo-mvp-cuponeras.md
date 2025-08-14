@@ -76,6 +76,7 @@
   - [x] 3.3 Backend: endpoint `/registro` que preserva `localPublicId`, fuerza login/registro y asigna cupón si no existe.
   - [x] 3.4 Frontend: página/flujo con `localPublicId` (inicio del flujo implementado vía `/registro` JSON; resto se completará en 4.x).
   - [x] 3.5 Frontend (admin): sección para ver y descargar QR del local (PNG).
+  - [x] 3.6 Tests: asignación automática de cupón; descarga de QR; seguridad básica (id opaco).
   - [ ] 3.6 Tests: asignación automática de cupón; descarga de QR; seguridad básica (id opaco).
 
 - [ ] 4.0 Experiencia del Cliente
