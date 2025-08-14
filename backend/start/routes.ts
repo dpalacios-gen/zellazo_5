@@ -40,6 +40,9 @@ router.get('/oauth/:provider/callback', [OAuthController, 'callback'])
 router
   .post('/locals', [LocalsController, 'create'])
   .use(middleware.auth({ guards: ['api'] }))
+router
+  .get('/locals/me', [LocalsController, 'me'])
+  .use(middleware.auth({ guards: ['api'] }))
 
 // QR del local (PNG)
 router.get('/qr/local/:publicId.png', [QrController, 'localQr'])

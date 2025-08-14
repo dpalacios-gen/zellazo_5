@@ -19,6 +19,16 @@ export default class LocalsController {
     const local = await Local.create({ name, publicId: randomUUID(), adminUserId: user.id })
     return response.created(local)
   }
+
+  public async me({ auth, response }: HttpContext) {
+    const user = await auth.authenticate()
+    if (user.role !== UserRole.ADMIN) {
+      return response.forbidden({ error: 'Solo ADMIN' })
+    }
+    const local = await Local.query().where('adminUserId', user.id).first()
+    if (!local) return response.notFound({ error: 'Sin local' })
+    return local
+  }
 }
 
 
